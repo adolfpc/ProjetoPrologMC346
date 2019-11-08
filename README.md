@@ -1,4 +1,4 @@
-MC346 - Projeto Prolog
+# MC346 - Projeto Prolog
 
 comando para rodar o codigo:
 
