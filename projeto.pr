@@ -1,0 +1,55 @@
+% Alunos:
+%     Adolf Pereira - RA: 164933
+%     Renan Amorim  - RA: 186454
+
+topo :- read(X), imprime(X).
+
+listaIntersecoes(L, Res) :- findall( (X,Y) , ( member(X,L), member(Y,L) , intersecta(X,Y) , X \= Y ) , R), removeDuplos(R, Res), !.
+
+removeDuplos([],[]).
+removeDuplos([(X,Y)|R], Res) :- removeDuplos(R, RR), (((member((X,Y), RR); member((Y,X), RR)), Res = RR ); Res = [(Y,X)|RR]), !.
+
+
+intersecta(circ(_,X1,Y1,R1),circ(_,X2,Y2,R2)) :- 
+    distPontos(X1,Y1,X2,Y2, Dist), somaRaio(R1,R2, Sum), Dist =< Sum. 
+intersecta(quad(A,X1,Y1,L1),quad(B,X2,Y2,L2)) :- 
+    verticeQuad(quad(A,X1,Y1,L1),quad(B,X2,Y2,L2), L1x, L1y, R1x, R1y, L2x, L2y, R2x, R2y),
+    ((L1x =< R2x , L2x =< R1x) , (L1y >= R2y , L2y >= R1y)).
+intersecta(quad(A,X1,Y1,L1),circ(B,X2,Y2,R1)) :- intersecta(circ(B,X2,Y2,R1),quad(A,X1,Y1,L1)).
+intersecta(circ(_,X2,Y2,R1),quad(_,X1,Y1,L1)) :- DeltaX is (X2 - max((X1 - L1/2), min(X2,X1+L1/2))), DeltaY is (Y2 - max((Y1 - L1/2), min(Y2,Y1+L1/2))), (DeltaX * DeltaX + DeltaY * DeltaY) =< (R1 * R1).
+
+
+verticeQuad(quad(_,X1,Y1,LADO1), quad(_,X2,Y2,LADO2), L1x, L1y, R1x, R1y, L2x, L2y, R2x, R2y) :- 
+    L1x is X1-(LADO1/2), L1y is Y1+(LADO1/2),
+    L2x is X2-(LADO2/2), L2y is Y2+(LADO2/2),
+    R1x is X1+(LADO1/2), R1y is Y1-(LADO1/2),
+    R2x is X2+(LADO2/2), R2y is Y2-(LADO2/2).
+                                                                                                
+
+distPontos(X1,Y1,X2,Y2, N) :- N is sqrt((X2-X1)*(X2-X1) + (Y2-Y1)*(Y2-Y1)).
+
+somaRaio(R1, R2, S) :- S is R1+R2. 
+
+
+tam(L, N) :- tamx(L, N, 0).
+tamx([], N, Acc) :- Acc=N.
+tamx([_|Tail], N, Acc) :- NN is Acc+1, tamx(Tail, N, NN).
+
+
+imprime(L) :- listaIntersecoes(L, Res), tam(Res, N), write(N), write(" elementos se intersectam"), nl(), imprime_el(Res).
+
+imprime_el([]).
+imprime_el([(quad(A,_,_,_) , quad(B,_,_,_))|R]) :- write(A), write(" intersecta "), write(B), nl(), imprime_el(R).
+imprime_el([(quad(A,_,_,_) , circ(B,_,_,_))|R]) :- write(A), write(" intersecta "), write(B), nl(), imprime_el(R).
+imprime_el([(circ(A,_,_,_) , circ(B,_,_,_))|R]) :- write(A), write(" intersecta "), write(B), nl(), imprime_el(R).
+imprime_el([(circ(A,_,_,_) , quad(B,_,_,_))|R]) :- write(A), write(" intersecta "), write(B), nl(), imprime_el(R).
+
+
+
+
+
+
+
+
+
+

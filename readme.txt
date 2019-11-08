@@ -1,0 +1,1 @@
+swipl -q -f projeto.pr -t topo  < arqtestes.in
